@@ -1,0 +1,12 @@
+{
+  "name": "iina-plugin-definition",
+  "version": "0.0.1",
+  "description": "Type definitions for IINA plugin API.",
+  "main": "",
+  "repository": "https://github.com/iina/iina-plugin-definition",
+  "author": {
+    "name": "Collider LI",
+    "url": "https://github.com/lhc70000"
+  },
+  "license": "MIT"
+}
