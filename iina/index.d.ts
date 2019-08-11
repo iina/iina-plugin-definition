@@ -62,6 +62,7 @@ declare namespace IINA {
         export interface Menu {
             item(title: string, action?: () => void): MenuItem;
             addItem(item: MenuItem): void;
+            removeAllItems(): void;
         }
 
         export interface Overlay {
