@@ -15,6 +15,8 @@ declare namespace IINA {
     export interface MenuItem {
         items: MenuItem[];
         title: string;
+        selected: boolean;
+        enabled: boolean;
         action: () => void;
         addSubMenuItem(item: MenuItem): void;
     }
@@ -60,7 +62,7 @@ declare namespace IINA {
         }
 
         export interface Menu {
-            item(title: string, action?: () => void): MenuItem;
+            item(title: string, action?: () => void, selected?: boolean, enabled?: boolean): MenuItem;
             addItem(item: MenuItem): void;
             removeAllItems(): void;
         }
