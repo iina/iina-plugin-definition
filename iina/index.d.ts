@@ -209,7 +209,7 @@ declare namespace IINA {
     }
 
     export interface Console {
-      log(message: any): void;
+      log(...message: any[]): void;
       warn(message: any): void;
       error(message: any): void;
     }
