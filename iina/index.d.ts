@@ -115,7 +115,24 @@ declare namespace IINA {
 
     interface VideoAPI extends TrackAPI {}
 
+    /**
+     * This Object is only availible in mainEntry,
+     * You cannot access it in GlobalEntry or Overlay or StandaloneWindow
+     * @NotAccessibleForGlobalEntry
+     */
     export interface Core {
+      /**
+       * open a url
+       * param can be a http(s) or file:/// or absolute path
+       * etc:
+       * ```
+       * open("http://example.com/example1.mp4")
+       * open("http://example.com/example2.m3u")
+       * open("/User/apple/example3.mp4")
+       * open("file:///User/apple/example3.mp4")
+       * ```
+       * @param url string
+       */
       open(url: string): void;
       osd(url: string): void;
       pause(): void;
@@ -136,6 +153,11 @@ declare namespace IINA {
       subtitle: SubtitleAPI;
     }
 
+    /**
+     * This Object is only availible in mainEntry,
+     * You cannot access it in GlobalEntry or Overlay or StandaloneWindow
+     * @NotAccessibleForGlobalEntry
+     */
     export interface MPV {
       getFlag(name: string): boolean;
       getNumber(name: string): number;
@@ -150,6 +172,9 @@ declare namespace IINA {
       ): void;
     }
 
+    /**
+     * @NotAccessibleForGlobalEntry
+     */
     export interface Event {
       // Window
       on(event: "iina.window-loaded", callback: () => void): string;
@@ -179,6 +204,9 @@ declare namespace IINA {
       call<T = any>(method: string, args: any[]): Promise<T>;
     }
 
+    /**
+     * @NotAccessibleForGlobalEntry
+     */
     export interface HTTP {
       get(url: string, options: HTTPRequestOption): Promise<HTTPResponse>;
       post(url: string, options: HTTPRequestOption): Promise<HTTPResponse>;
@@ -205,6 +233,17 @@ declare namespace IINA {
       removeAllItems(): void;
     }
 
+    /**
+     * Overlay represent a webview that is covered above the player window
+     * 
+     * You can use this Object to load a html file cover the player window
+     * usage:
+     * ```
+     * Overlay.loadFile('relative file path');
+     * Overlay.show();
+     * ```
+     * @NotAccessibleForGlobalEntry
+     */
     export interface Overlay {
       show(): void;
       hide(): void;
@@ -213,10 +252,18 @@ declare namespace IINA {
       simpleMode(): void;
       setStyle(style: string);
       setContent(content: string);
+      /**
+       * send message to the Overlay page
+       * @param name string
+       * @param data any
+       */
       postMessage(name: string, data: any): void;
       onMessage(name: string, callback: (data: any) => void): void;
     }
 
+    /**
+     * @NotAccessibleForGlobalEntry
+     */
     export interface Playlist {
       list(): PlaylistItem[];
       count(): number;
@@ -265,6 +312,9 @@ declare namespace IINA {
       download(item: SubtitleItem<T>): string[];
     }
 
+    /**
+     * @NotAccessibleForGlobalEntry
+     */
     export interface Subtitle {
       item<T>(data: T, desc: SubtitleItemDescriptor<T>): SubtitleItem<T>;
       registerProvider<T>(id: string, provider: SubtitleProvider<T>): void;
@@ -285,6 +335,9 @@ declare namespace IINA {
       );
     }
 
+    /**
+     * @NotAccessibleForGlobalEntry
+     */
     export interface SidebarView {
       show(): void;
       hide(): void;
@@ -335,19 +388,22 @@ declare namespace IINA {
   }
 
   export interface IINAGlobal {
+    // @NotAccessibleForGlobalEntry start
     core: API.Core;
     mpv: API.MPV;
     event: API.Event;
     http: API.HTTP;
+    overlay: API.Overlay;
+    sidebar: API.SidebarView;
+    playlist: API.Playlist;
+    subtitie: API.Subtitle;
+    // @NotAccessibleForGlobalEntry end
+
     console: API.Console;
     menu: API.Menu;
-    overlay: API.Overlay;
     utils: API.Utils;
     preferences: API.Preferences;
-    subtitie: API.Subtitle;
-    sidebar: API.SidebarView;
     standaloneWindow: API.StandaloneWindow;
-    playlist: API.Playlist;
     file: API.File;
     global: API.Global;
   }
