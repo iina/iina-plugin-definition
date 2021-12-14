@@ -6,16 +6,16 @@ declare namespace IINA {
     height: number;
   }
 
-  export interface HTTPRequestOption {
+  export interface HTTPRequestOption<DataType = Record<string, any>> {
     params: Record<string, string>;
     headers: Record<string, string>;
-    data: Record<string, any>;
+    data: DataType;
   }
 
-  export interface HTTPResponse {
+  export interface HTTPResponse<DataType = any> {
     text: string;
     reason: string;
-    data: any;
+    data: DataType;
     statusCode: number;
   }
 
@@ -195,11 +195,11 @@ declare namespace IINA {
     }
 
     export interface HTTP {
-      get(url: string, options?: HTTPRequestOption): Promise<HTTPResponse>;
-      post(url: string, options?: HTTPRequestOption): Promise<HTTPResponse>;
-      put(url: string, options?: HTTPRequestOption): Promise<HTTPResponse>;
-      patch(url: string, options?: HTTPRequestOption): Promise<HTTPResponse>;
-      delete(url: string, options?: HTTPRequestOption): Promise<HTTPResponse>;
+      get<ReqData = Record<string, any>, ResData = any>(url: string, options: HTTPRequestOption<ReqData>): Promise<HTTPResponse<ResData>>;
+      post<ReqData = Record<string, any>, ResData = any>(url: string, options: HTTPRequestOption<ReqData>): Promise<HTTPResponse<ResData>>;
+      put<ReqData = Record<string, any>, ResData = any>(url: string, options: HTTPRequestOption<ReqData>): Promise<HTTPResponse<ResData>>;
+      patch<ReqData = Record<string, any>, ResData = any>(url: string, options: HTTPRequestOption<ReqData>): Promise<HTTPResponse<ResData>>;
+      delete<ReqData = Record<string, any>, ResData = any>(url: string, options: HTTPRequestOption<ReqData>): Promise<HTTPResponse<ResData>>;
       xmlrpc(location: string): HTTPXMLRPC;
       download(
         url: string,
