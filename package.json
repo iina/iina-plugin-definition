@@ -1,6 +1,6 @@
 {
   "name": "iina-plugin-definition",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Type definitions for IINA plugin API.",
   "main": "",
   "repository": "https://github.com/iina/iina-plugin-definition",
