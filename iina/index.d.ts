@@ -153,18 +153,33 @@ declare namespace IINA {
     export interface Event {
       // Window
       on(event: "iina.window-loaded", callback: () => void): string;
-      on(event: "iina.window-size-adjusted", callback: (frame: Rect) => void): string;
+      on(
+        event: "iina.window-size-adjusted",
+        callback: (frame: Rect) => void,
+      ): string;
       on(event: "iina.window-moved", callback: (frame: Rect) => void): string;
       on(event: "iina.window-resized", callback: (frame: Rect) => void): string;
-      on(event: "iina.window-fs.changed", callback: (status: boolean) => void): string;
+      on(
+        event: "iina.window-fs.changed",
+        callback: (status: boolean) => void,
+      ): string;
       on(event: "iina.window-screen.changed", callback: () => void): string;
       on(event: "iina.window-miniaturized", callback: () => void): string;
       on(event: "iina.window-deminiaturized", callback: () => void): string;
-      on(event: "iina.window-main.changed", callback: (status: boolean) => void): string;
+      on(
+        event: "iina.window-main.changed",
+        callback: (status: boolean) => void,
+      ): string;
       on(event: "iina.window-will-close", callback: () => void): string;
       on(event: "iina.window-did-close", callback: () => void): string;
-      on(event: "iina.music-mode.changed", callback: (status: boolean) => void): string;
-      on(event: "iina.pip.changed", callback: (status: boolean) => void): string;
+      on(
+        event: "iina.music-mode.changed",
+        callback: (status: boolean) => void,
+      ): string;
+      on(
+        event: "iina.pip.changed",
+        callback: (status: boolean) => void,
+      ): string;
       on(event: "iina.file-loaded", callback: (url: string) => void): string;
       on(event: "iina.file-started", callback: () => void): string;
       on(event: "iina.mpv-inititalized", callback: () => void): string;
@@ -180,12 +195,17 @@ declare namespace IINA {
     }
 
     export interface HTTP {
-      get(url: string, options: HTTPRequestOption): Promise<HTTPResponse>;
-      post(url: string, options: HTTPRequestOption): Promise<HTTPResponse>;
-      put(url: string, options: HTTPRequestOption): Promise<HTTPResponse>;
-      patch(url: string, options: HTTPRequestOption): Promise<HTTPResponse>;
-      delete(url: string, options: HTTPRequestOption): Promise<HTTPResponse>;
+      get(url: string, options?: HTTPRequestOption): Promise<HTTPResponse>;
+      post(url: string, options?: HTTPRequestOption): Promise<HTTPResponse>;
+      put(url: string, options?: HTTPRequestOption): Promise<HTTPResponse>;
+      patch(url: string, options?: HTTPRequestOption): Promise<HTTPResponse>;
+      delete(url: string, options?: HTTPRequestOption): Promise<HTTPResponse>;
       xmlrpc(location: string): HTTPXMLRPC;
+      download(
+        url: string,
+        dest: string,
+        options?: HTTPRequestOption & { method: string },
+      ): Promise<undefined>;
     }
 
     export interface Console {
@@ -198,11 +218,18 @@ declare namespace IINA {
       item(
         title: string,
         action?: () => void | null,
-        options?: Partial<{ enabled: boolean; selected: boolean; keyBinding: string }>,
+        options?: Partial<{
+          enabled: boolean;
+          selected: boolean;
+          keyBinding: string;
+        }>,
       ): MenuItem;
       addItem(item: MenuItem): void;
       separator(): MenuItem;
+      items(): MenuItem[];
+      removeAt(index: number): void;
       removeAllItems(): void;
+      forceUpdate(): void;
     }
 
     export interface Overlay {
@@ -226,15 +253,22 @@ declare namespace IINA {
       play(index: number): void;
       playNext(): void;
       playPrevious(): void;
-      registerMenuBuilder(builder: (entries: PlaylistItem[]) => MenuItem[]): void;
+      registerMenuBuilder(
+        builder: (entries: PlaylistItem[]) => MenuItem[],
+      ): void;
     }
 
     export interface Utils {
       ERROR_BINARY_NOT_FOUND: -1;
       ERROR_RUNTIME: -2;
+      fileInPath(file: string): boolean;
+      resolvePath(path: string): string;
       exec(
         file: string,
         args: string[],
+        cwd?: string | null,
+        stdoutHook?: ((data: string) => void) | null,
+        stderrHook?: ((data: string) => void) | null,
       ): Promise<{ status: number; stdout: string; stderr: string }>;
       ask(title: string): boolean;
       prompt(title: string): string | undefined;
@@ -255,9 +289,11 @@ declare namespace IINA {
       desc: SubtitleItemDescriptor<T>;
     }
 
-    export type SubtitleItemDescriptor<T> = (
-      item: SubtitleItem<T>,
-    ) => { name: string; left: string; right: string };
+    export type SubtitleItemDescriptor<T> = (item: SubtitleItem<T>) => {
+      name: string;
+      left: string;
+      right: string;
+    };
 
     export interface SubtitleProvider<T> {
       search(): Promise<SubtitleItem<T>[]>;
@@ -276,13 +312,24 @@ declare namespace IINA {
       loadFile(path: string): void;
       postMessage(name: string, data: any): void;
       onMessage(name: string, callback: (data: any) => void): void;
+      simpleMode(): void;
+      setStyle(style: string): void;
+      setContent(content: string): void;
       setProperty(
         props: Partial<{
           title: string;
           resizable: boolean;
+          hudWindow: boolean;
           fullSizeContentView: boolean;
+          hideTitleBar: boolean;
         }>,
-      );
+      ): void;
+      setFrame(
+        w?: number | null,
+        h?: number | null,
+        x?: number | null,
+        y?: number | null,
+      ): void;
     }
 
     export interface SidebarView {
@@ -319,10 +366,23 @@ declare namespace IINA {
 
     export interface Global {
       createPlayerInstance(
-        options: Partial<{ disableWindowAnimation: boolean; enablePlugins: boolean }>,
+        options: Partial<{
+          disableWindowAnimation: boolean;
+          disableUI: boolean;
+          enablePlugins: boolean;
+          url: string;
+        }>,
       ): number;
-      postMessage(target: null | number, name: string, data: any): void;
-      onMessage(name: string, callback: (data: any) => void): void;
+      postMessage(
+        target: null | number | string,
+        name: string,
+        data: any,
+      ): void;
+      postMessage(name: string, data: any): void;
+      onMessage(
+        name: string,
+        callback: (data: any, player?: string) => void,
+      ): void;
     }
   }
 
@@ -352,6 +412,11 @@ declare namespace IINA {
     global: API.Global;
   }
 }
+
+declare const setInterval: (callback: Function, time: number) => string;
+declare const setTimeout: (callback: Function, time: number) => string;
+declare const clearInterval: (id: string) => void;
+declare const clearTimeout: (id: string) => void;
 
 declare const iina: IINA.IINAGlobal;
 declare const require: IINA.Require;
