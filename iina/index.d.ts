@@ -404,7 +404,7 @@ declare namespace IINA {
     overlay: API.Overlay;
     utils: API.Utils;
     preferences: API.Preferences;
-    subtitie: API.Subtitle;
+    subtitle: API.Subtitle;
     sidebar: API.SidebarView;
     standaloneWindow: API.StandaloneWindow;
     playlist: API.Playlist;
