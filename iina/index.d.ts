@@ -117,7 +117,7 @@ declare namespace IINA {
 
     export interface Core {
       open(url: string): void;
-      osd(url: string): void;
+      osd(message: string): void;
       pause(): void;
       resume(): void;
       stop(): void;
