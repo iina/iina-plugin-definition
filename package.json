@@ -3,6 +3,7 @@
   "version": "0.0.7",
   "description": "Type definitions for IINA plugin API.",
   "main": "",
+  "types": "iina/index.d.ts",
   "repository": "https://github.com/iina/iina-plugin-definition",
   "author": {
     "name": "Collider LI",
