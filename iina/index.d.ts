@@ -354,7 +354,7 @@ declare namespace IINA {
       list(
         path: string,
         options: Partial<{ includeSubDir: boolean }>,
-      ): { filename: string; path: string; isDir: boolean };
+      ): { filename: string; path: string; isDir: boolean }[];
       exists(path: string): boolean;
       write(path: string, content: string): void;
       read(path: string, options: Partial<{}>): string | undefined;
