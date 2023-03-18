@@ -1,0 +1,48 @@
+{
+  "tsconfig": "iina/tsconfig.json",
+  "name": "IINA Plugin API",
+  "sort": ["source-order"],
+  "categorizeByGroup": false,
+  "customCss": "pages/style.css",
+  "media": "pages/media",
+  "navigationLinks": {
+    "IINA Home": "https://iina.io",
+    "GitHub": "https://github.com/iina/iina"
+  },
+  "pluginPages": {
+    "pages": [
+      {
+        "title": "IINA Plugin API",
+        "moduleRoot": true,
+        "source": "index.md",
+        "children": [
+          {
+            "title": "Getting Started",
+            "source": "getting-started.md"
+          },
+          { "title": "Creating Plugins", "source": "creating-plugins.md" },
+          {
+            "title": "Development Guide",
+            "source": "dev-guide.md"
+          },
+          {
+            "title": "Global Entry Point",
+            "source": "global-entry.md"
+          },
+          {
+            "title": "Web Views",
+            "source": "webviews.md"
+          },
+          {
+            "title": "Subtitle Providers",
+            "source": "subtitle-providers.md"
+          },
+          {
+            "title": "Plugin Preferences",
+            "source": "plugin-preferences.md"
+          }
+        ]
+      }
+    ]
+  }
+}

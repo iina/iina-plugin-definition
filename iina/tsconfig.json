@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["es6", "es7", "esnext"],
+    "lib": ["es6", "es7", "esnext"]
   },
+  "include": ["index.d.ts"]
 }

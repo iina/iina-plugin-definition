@@ -1,13 +1,19 @@
 {
   "name": "iina-plugin-definition",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Type definitions for IINA plugin API.",
   "main": "",
   "types": "iina/index.d.ts",
-  "repository": "https://github.com/iina/iina-plugin-definition",
   "author": {
     "name": "Collider LI",
     "url": "https://github.com/lhc70000"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "build": "npx typedoc --out docs iina/index.d.ts"
+  },
+  "devDependencies": {
+    "@knodes/typedoc-plugin-pages": "^0.23.1",
+    "typedoc": "^0.23.27"
+  }
 }

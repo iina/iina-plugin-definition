@@ -7,6 +7,7 @@ yarn add iina-plugin-definition
 ```
 
 or
+
 ```sh
 npm i iina-plugin-definition
 ```
