@@ -828,6 +828,249 @@ declare namespace IINA {
       off(event: string, id: string);
     }
 
+    /**
+     * The `Input` module provides methods to capture mouse and keybord events in the player window.
+     * Although it can be used to add keyboard shortcuts,
+     * it is recommended to use the {@link API.Menu | Menu} module to do so.
+     * This module, by providing both the `keyDown`/`mouseDown` and `keyUp`/`mouseUp` listeners,
+     * provides more user interaction possibilities; for example, you can implement a "hold to seek" feature.
+     *
+     * Each listener is associated with a priority. Listeners with higher priority are called first.
+     * If the priority `>= PRIORITY_HIGH`, the handler will be called before the default handlers,
+     * e.g. mpv key bindings. To be more specific, the listeners are called in the following order:
+     * - Listeners with priority `>= PRIORITY_HIGH`
+     * - Default handlers, e.g. mpv key bindings
+     * - Listeners with priority `< PRIORITY_HIGH`
+     *
+     * **You should avoid using `PRIORITY_HIGH` unless necessary.**
+     * The default priority is always `PRIORITY_LOW`.
+     *
+     * The event callback should return a boolean value indicating whether the event is handled.
+     * If the event is handled, it will not be passed down to other listeners
+     * (which might include the default handlers in IINA, therefore overriding the default behavior).
+     *
+     * In IINA, an input event is sent to the menu bar first, then to the frontmost window.
+     * Therefore, under current implementation,
+     * if a key input is captured by one of the menu items, it will not be passed down to this module.
+     * We may change this behavior in the future, but for now,
+     * you should not expect much from the priority system and always use `PRIORIY_LOW` for your listeners.
+     *
+     * For mouse events, due to the complexity of the underlying implementation,
+     * currently it is not possible to detect drag events.
+     * For more advanced mouse event handling, the {@link API.Overlay | overlay} module might be helpful.
+     *
+     * @example
+     * ```js
+     * // priority is HIGH for this listener, so it will be called before default handlers
+     * input.onKeyDown("A", (data) => {
+     *   console.log(data);
+     *   // doesn't return anything, so the event will be passed down to other handlers
+     * }, input.PRIORITY_HIGH)
+     *
+     * // priority is LOW for this listener, so it will be called after default handlers
+     * input.onKeyUp("Alt+a", ({x, y}) => {
+     *   console.log(`Alt+a up at ${x},${y}`);
+     *   return true;  // stop the event propagation
+     * })
+     * ```
+     *
+     * Hold the mouse button to speed up the playback:
+     * ```js
+     * input.onMouseDown(input.MOUSE, () => { core.setSpeed(2) });
+     * input.onMouseUp(input.MOUSE, () => { core.setSpeed(1); });
+     * // Reset speed when started dragging.
+     * // See the docs for the `onMouseDrag` method for more details.
+     * input.onMouseDrag(input.MOUSE, () => { core.setSpeed(1) });
+     * ```
+     *
+     * @availableInEntry Main entry only
+     * @category API Modules
+     */
+    export interface Input {
+      MOUSE: string;
+      RIGHT_MOUSE: string;
+      OTHER_MOUSE: string;
+
+      PRIORITY_LOW: number;
+      PRIORITY_HIGH: number;
+      /**
+       * Convert a mpv key code to a standarized form used in IINA.
+       * This method is useful when checking if there is already a registered key binding.
+       *
+       * @param code the mpv key code.
+       * @example input.normalizeKeyCode("Shift+a") // => "A"
+       */
+      normalizeKeyCode(code: string): string;
+      /**
+       * Get all registered mpv (and iina) key bindings.
+       * @returns A dictionary of key bindings, where the key is the key code and the value is
+       * an object with the following properties:
+       *   - action: the corresponding mpv or iina command
+       *   - key: the key code
+       *   - isIINACommand: whether the command is an iina command
+       * @example
+       * // check if a key binding is already registered
+       * const kc = input.normalizeKeyCode("Shift+Alt+X")
+       * if (input.getAllKeyBindings()[kc]) {
+       *   // alert the user: the key binding is already registered
+       * }
+       */
+      getAllKeyBindings(): Record<
+        string,
+        { key: string; action: string; isIINACommand: string }
+      >;
+      /**
+       * Listen to a key down event.
+       * @param button The key (or key combination) to listen to. It should be a valid mpv key code.
+       * @param callback To remove the listener, pass `null` to this parameter.
+       * @param priority The priority of the handler. Higher priority handlers are called first.
+       */
+      onKeyDown(
+        button: string,
+        /**
+         * @returns Whether to stop the event propagation.
+         * If `true`, the event will not be passed down to other handlers.
+         */
+        callback: (
+          /**
+           * The data associated with the event.
+           */
+          data: {
+            /**
+             * The x coordinate of the current mouse cursor, relative to the player window.
+             */
+            x: number;
+            /**
+             * The y coordinate of the current mouse cursor, relative to the player window.
+             */
+            y: number;
+            /**
+             * Whether the event is a repeat event (by holding down the key).
+             */
+            isRepeat: boolean;
+          },
+        ) => boolean,
+        priority?: number,
+      ): string;
+      /**
+       * Listen to a key up event.
+       * @param button The key (or key combination) to listen to. It should be a valid mpv key code.
+       * @param callback To remove the listener, pass `null` to this parameter.
+       * @param priority The priority of the handler. Higher priority handlers are called first.
+       */
+      onKeyUp(
+        button: string,
+        /**
+         * @returns Whether to stop the event propagation.
+         * If `true`, the event will not be passed down to other handlers.
+         */
+        callback: (
+          /**
+           * The data associated with the event.
+           */
+          data: {
+            /**
+             * The x coordinate of the current mouse cursor, relative to the player window.
+             */
+            x: number;
+            /**
+             * The y coordinate of the current mouse cursor, relative to the player window.
+             */
+            y: number;
+            /**
+             * Whether the event is a repeat event (by holding down the key).
+             */
+            isRepeat: boolean;
+          },
+        ) => boolean,
+        priority?: number,
+      ): string;
+      /**
+       * Listen to a mouse up event.
+       *
+       * Note that if you return `true` in the callback,
+       * **both the default single-click and double-click actions** in IINA will stop working.
+       * You are responsible for handling them on your own.
+       * @param button The mouse button. Should be one of `input.MOUSE`, `input.RIGHT_MOUSE`, and `input.OTHER_MOUSE`.
+       * @param callback To remove the listener, pass `null` to this parameter.
+       * @param priority The priority of the handler. Higher priority handlers are called first.
+       */
+      onMouseUp(
+        button: string,
+        /**
+         * @returns Whether to stop the event propagation.
+         * If `true`, the event will not be passed down to other handlers.
+         */
+        callback: (
+          /**
+           * The data associated with the event.
+           */
+          data: {
+            /**
+             * The x coordinate of the current mouse cursor, relative to the player window.
+             */
+            x: number;
+            /**
+             * The y coordinate of the current mouse cursor, relative to the player window.
+             */
+            y: number;
+          },
+        ) => boolean,
+        priority?: number,
+      ): string;
+      /**
+       * Listen to a mouse down event.
+       * @param button The mouse button. Should be one of `input.MOUSE`, `input.RIGHT_MOUSE`, and `input.OTHER_MOUSE`.
+       * @param callback To remove the listener, pass `null` to this parameter.
+       * @param priority The priority of the handler. Higher priority handlers are called first.
+       */
+      onMouseDown(
+        button: string,
+        /**
+         * @returns Whether to stop the event propagation.
+         * If `true`, the event will not be passed down to other handlers.
+         */
+        callback: (
+          /**
+           * The data associated with the event.
+           */
+          data: {
+            /**
+             * The x coordinate of the current mouse cursor, relative to the player window.
+             */
+            x: number;
+            /**
+             * The y coordinate of the current mouse cursor, relative to the player window.
+             */
+            y: number;
+          },
+        ) => boolean,
+        priority?: number,
+      ): string;
+      /**
+       * Listen to a mouse drag event. Works for the left mouse button only.
+       * The sole purpose of this method is to allow the plugin to know when a drag event is initiated
+       * while the mouse button is hold down. If the user started dragging,
+       * the plugin should not perform any action to interfere with the default dragging behavior.
+       * In short, if you need to do something _while the mouse button is hold down_,
+       * listen to both `mouseDown` and `mouseDrag` events, and cancel your action when either of them fires.
+       * @param button The mouse button. Should always be `input.MOUSE`.
+       * @param callback To remove the listener, pass `null` to this parameter.
+       * @param priority The priority of the handler, however it has no effect.
+       * There is no way to override the default dragging behavior in IINA.
+       * Should always be `PRIORITY_LOW`.
+       */
+      onMouseDrag(
+        button: typeof iina.input.MOUSE,
+        /**
+         * @returns Whether to stop the event propagation, but it has no effect.
+         * Should always return `false`.
+         */
+        callback: (data: { x: number; y: number }) => boolean,
+        priority?: number,
+      ): string;
+    }
+
     export interface HTTPXMLRPC {
       /**
        * Call a XML-RPC method.
@@ -920,6 +1163,145 @@ declare namespace IINA {
         dest: string,
         options?: HTTPRequestOption & { method: string },
       ): Promise<undefined>;
+    }
+
+    /**
+     * The `WebSocket` module provides a simple interface to create local WebSocket servers,
+     * therefore enabling the plugin to communicate with other applications.
+     * **It is only available on macOS 10.15 or later.**
+     *
+     * Currently, TLS (thus the `wss://` protocol) is not supported.
+     * When connecting to the server, a client should use the `ws://` protocol.
+     *
+     * @example
+     * ```js
+     * ws.createServer({ port: 10010 });
+     * ws.onStateUpdate((s, err) => {
+     *   if (s == "failed") {
+     *     console.log(err);
+     *   }
+     * })
+     *
+     * ws.onNewConnection(conn => console.log("new connection"));
+     * ws.onConnectionStateUpdate((conn, s) => console.log(conn + ": " + s));
+     * ws.onMessage((conn, m) => {
+     *   console.log(`Message from ${conn}: ${m.text()}`);
+     *   ws.sendText(conn, "Received!");
+     * )
+     *
+     * ws.startServer();
+     * ```
+     *
+     * @availableInEntry Main and Global
+     */
+    export interface WebSocket {
+      /**
+       * Create a WebSocket server.
+       * @param options The options for the server.
+       * @throws If the option is invalid, an error will be thrown.
+       */
+      createServer(options: Partial<{ port: number }>): void;
+      /**
+       * Start the WebSocket server. Must be called after `createServer()`.
+       * You should setup state update handlers before calling this method,
+       * since some errors (e.g. port already in use) may occur **after** starting the server
+       * and will be reported through a state update.
+       *
+       * @throws If the server is not in the correct state, an error will be thrown.
+       */
+      startServer(): void;
+      /**
+       * Handle the server's state update.
+       * You should respond properly to the "failed" or "cancelled" state.
+       * The server will be removed if the state is "failed" or "cancelled",
+       * and you must call `createServer()` and `startServer()` again to create a new one.
+       *
+       * It is possible that you receive a "failed" state immediately after calling `startServer()`,
+       * which indicates that an error occurred when starting the server.
+       * @param callback The callback function.
+       */
+      onStateUpdate(
+        callback: (
+          /**
+           * The server's new state.
+           */
+          state: "setup" | "ready" | "waiting" | "failed" | "cancelled",
+          /**
+           * The error if the state is `failed` or `waiting`.
+           */
+          error?: { message: string; description: string },
+        ) => void,
+      ): void;
+      /**
+       * Handle a new connection to the server.
+       * @param callback The callback function.
+       */
+      onNewConnection(
+        callback: (
+          /**
+           * An unique ID for this connection.
+           */
+          conn: string,
+          /**
+           * The information of the client.
+           */
+          info: { path: string },
+        ) => void,
+      ): void;
+      /**
+       * Handle a connection's state change.
+       * You should respond properly to the "failed" or "cancelled" state,
+       * e.g. remove the connection ID from your cached list.
+       * @param callback The callback function.
+       */
+      onConnectionStateUpdate(
+        callback: (
+          /**
+           * The connection ID.
+           */
+          conn: string,
+          /**
+           * The connection's new state.
+           */
+          state:
+            | "setup"
+            | "preparing"
+            | "ready"
+            | "waiting"
+            | "failed"
+            | "cancelled",
+          /**
+           * The error if the state is `failed` or `waiting`.
+           */
+          error?: { message: string; description: string },
+        ) => void,
+      ): void;
+      /**
+       * Handle a message from a connection.
+       */
+      onMessage(
+        callback: (
+          /**
+           * The connection ID.
+           */
+          conn: string,
+          /**
+           * The message content.
+           */
+          message: { data: () => Uint8Array; text: () => string },
+        ) => void,
+      ): void;
+      /**
+       * Send a message to a connection. The message will be encoded as UTF-8 and sent as binary data.
+       * @param conn The connection ID.
+       * @param text The text to send.
+       * @returns "no_connection" if the connection does not exist, "success" if the message is sent successfully.
+       * @throws Any error occurred when sending the message.
+       */
+      sendText(
+        conn: string,
+        text: string,
+      ): Promise<"no_connection" | "success">;
     }
 
     /**
@@ -1095,6 +1477,21 @@ declare namespace IINA {
        * @param opacity The opacity of the overlay, from 0 to 1.
        */
       setOpacity(opacity: number): void;
+      /**
+       * Indicate whether the overlay accepts input events.
+       * If set to `true`, mouse events will be passed to the overlay,
+       * but only for the HTML elements with the `data-clickable` attribute.
+       * In this case, buttons will become clickable and input fields will become editable.
+       * See [API in Web Views](/pages/webviews) for more information.
+       *
+       * ```html
+       * <button data-clickable>Click Me</button>
+       * <input type="text" data-clickable>
+       * ```
+       *
+       * @param clickable Whether the overlay is clickable.
+       */
+      setClickable(clickable: boolean): void;
       /**
        * Clear the overlay contents and load a HTML file into the overlay.
        * The HTML file should contain the CSS and JavaScript code to render the contents.
@@ -1907,8 +2304,10 @@ declare namespace IINA {
     mpv: API.MPV;
     event: API.Event;
     http: API.HTTP;
+    ws: API.WebSocket;
     console: API.Console;
     menu: API.Menu;
+    input: API.Input;
     overlay: API.Overlay;
     utils: API.Utils;
     preferences: API.Preferences;

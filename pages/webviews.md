@@ -153,5 +153,35 @@ body {
 }
 ```
 
-The background color for all webviews are transparent, so it will automatically adapt to the system appearance.
-Normally, you don't need to specify the background color in your CSS.
+Since this is the standard way to support light and dark appearances,
+existing UI frameworks should work out of the box.
+
+The background color for all webviews are transparent, so it will automatically adapt to the system appearance
+(following the window background).
+Normally you don't need to specify the background color in your CSS.
+
+## Enabling Interactions for the Overlay Webview
+
+By default, the overlay is not interactive, which means that users cannot click on links or buttons, or select text.
+This is because the webview can otherwise absorb all input events and interfere with the normal operation of IINA.
+However, you can enable interactions for the webview by calling `overlay.setClickable(true)`.
+
+Next, you must specify which HTML elements are clickable by adding the `data-clickable` attribute to them.
+For example,
+
+```html
+<button id="open-btn" data-clickable>Clisk Me</button>
+<input type="text" id="input" data-clickable />
+```
+
+Please don't overuse this feature, as the hit test for clickable elements is not very efficient,
+although the performance impact should be negligible for most use cases.
+
+When using `data-clickable` with input controls, you should also consider the fact that
+if the input field is focused, it will capture all key input events,
+while the user cannot easily unfocus the input field by clicking outside of it.
+Your JavaScript code should handle this situation correctly to avoid unexpected behavior.
+For example, let the user click a button to submit the input,
+or manually blur the input field after accepting the input.
+
+When finished, you should call `overlay.setClickable(false)` to disable interactions for the webview.

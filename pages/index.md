@@ -16,6 +16,7 @@ Quick links to the documentation of each API module:
 - [`iina.menu`](/interfaces/IINA.API.Menu): add menu items.
 - [`iina.subtitle`](/interfaces/IINA.API.Subtitle): register custom subtitle downloaders.
 - [`iina.playlist`](/interfaces/IINA.API.Playlist): manipulate playlist items, add custom actions to the playlist's context menu.
+- [`iina.input`](/interfaces/IINA.API.Input): capture keyboard and mouse events.
 
 #### Display custom user interfaces
 
@@ -28,6 +29,7 @@ Quick links to the documentation of each API module:
 - [`iina.file`](/interfaces/IINA.API.File): access the file system.
 - [`iina.utils`](/interfaces/IINA.API.Utils): run shell commands, present dialogs, etc.
 - [`iina.http`](/interfaces/IINA.API.HTTP): make HTTP requests.
+- [`iina.ws`](/interfaces/IINA.API.WebSocket): create WebSocket connections.
 
 #### Control player instances
 
