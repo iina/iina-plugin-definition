@@ -139,3 +139,26 @@ in IINA's user interface.
   },
 }
 ```
+
+## Using custom user interface
+
+The subtitle provider can also provide a custom user interface for the search results.
+This can be done by returning `subtitle.CUSTOM_IMPLEMENTATION` from the `search()` method.
+Then IINA will not invoke the remaining `description()` and `download()`.
+The plugin can then use the `sidebar` or `standaloneWindow` module to create a custom user interface.
+
+```js
+subtitle.registerProvider("open-sub", {
+  search: async () => {
+    // ...
+    return subtitle.CUSTOM_IMPLEMENTATION;
+  },
+  description: (item) => {
+    return null;
+  },
+  download: async (item) => {
+    return null;
+  },
+});
+console.log("Sub provider registered");
+```

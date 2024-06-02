@@ -1648,6 +1648,9 @@ declare namespace IINA {
      * @availableInEntry Main and Global entry
      * @category API Modules
      */
+    /**
+     * The `Utils` interface provides utility methods for various operations such as file manipulation, executing external programs, and interacting with the system.
+     */
     export interface Utils {
       /**
        * The error code returned by `utils.exec` when the executable file is not found.
@@ -1686,9 +1689,9 @@ declare namespace IINA {
        * @param cwd The working directory of the executable file.
        * @param stdoutHook Set up a hook to receive the streaming standard output of the executable file.
        * @param stderrHook Set up a hook to receive the streaming standard error of the executable file.
-       * @returns A promise that resolves to an object containing the exit status, standard output and standard error output.
+       * @returns A promise that resolves to an object containing the exit status, standard output, and standard error output.
        *
-       * @remarks Permission "file-system" must present in Info.json to use this method.
+       * @remarks Permission "file-system" must be present in Info.json to use this method.
        * @example
        * ```js
        * // execute ffmpeg
@@ -1722,7 +1725,7 @@ declare namespace IINA {
       ): Promise<{ status: number; stdout: string; stderr: string }>;
       /**
        * Show a system dialog with "OK" and "Cancel" buttons.
-       * Can be used to ask for confirmation, or simply show a message to the user.
+       * Can be used to ask for confirmation or simply show a message to the user.
        * @param title The content of the dialog.
        * @returns `true` if the user clicks "OK", `false` if the user clicks "Cancel".
        *
@@ -1740,7 +1743,7 @@ declare namespace IINA {
        *
        * @example
        * ```js
-       * // download a file to plugin's data folder with user-input filename
+       * // download a file to the plugin's data folder with user-input filename
        * const fn = utils.prompt("Please enter the file name");
        * http.download("https://example.com/test.zip", `@data/downloads/${fn}`);
        * ```
@@ -1770,6 +1773,30 @@ declare namespace IINA {
           allowedFileTypes: string[];
         }>,
       ): string;
+      /**
+       * Write a password to the system keychain.
+       * Can be used to store other sensitive information such as JWT tokens.
+       * @param service The service name. It will be prefixed by the plugin's identifier.
+       * @param name The username.
+       * @param password The password to write.
+       * @returns `true` if the password is written successfully, `false` otherwise.
+       */
+      keyChainWrite(service: string, name: string, password: string): boolean;
+      /**
+       * Read a password corresponding to the username from the system keychain.
+       * @param service The service name.
+       * @param name The usaername.
+       * @returns The password if read successfully, `false` otherwise.
+       */
+      keyChainRead(service: string, name: string): string | false;
+      /**
+       * Open a URL in the system. It can be a http or https link, or a file path.
+       * When it is a web URL, the default browser will be used to open the link.
+       * When it is a file path, magic variables like `@data` will be resolved, and the file will be revealed in Finder.
+       * @param url The URL to open.
+       * @returns `true` if the URL is opened successfully, `false` otherwise.
+       */
+      open(url: string): boolean;
     }
 
     /**
@@ -1836,7 +1863,7 @@ declare namespace IINA {
      * See [Subtitle Provider](/pages/subtitle-providers) for details.
      */
     export interface SubtitleProvider<T> {
-      search(): Promise<SubtitleItem<T>[]>;
+      search(): Promise<SubtitleItem<T>[]> | Subtitle["CUSTOM_IMPLEMENTATION"];
       description?(): SubtitleItemDescriptor<T>;
       download(item: SubtitleItem<T>): Promise<string[]>;
     }
@@ -1848,6 +1875,11 @@ declare namespace IINA {
      * @category API Modules
      */
     export interface Subtitle {
+      /**
+       * The subtitle provider's `search` function can return this to indicate that the provider
+       * will present the search result in a custom way and handle the download itself.
+       */
+      CUSTOM_IMPLEMENTATION: string;
       /**
        * Creates a subtitle item with associated data, and a descriptor object.
        * @param data The assiciated data of type `T`.
