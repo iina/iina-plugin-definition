@@ -263,6 +263,11 @@ declare namespace IINA {
        */
       ontop: boolean;
       /**
+       * Get or set the current miniaturized state.
+       * Set to true to miniaturize the window, and false to deminiaturize (restore).
+       */
+      miniaturized: boolean;
+      /**
        * When reading, get the current displayed sidebar name, or `null` if no sidebar is shown.
        * When writing, show the sidebar with the specified name, or hide the sidebar if `null` is given.
        * @example
