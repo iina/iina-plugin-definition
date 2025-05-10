@@ -1,6 +1,6 @@
 {
   "name": "iina-plugin-definition",
-  "version": "0.99.2",
+  "version": "0.99.3",
   "description": "Type definitions for IINA plugin API.",
   "main": "",
   "types": "iina/index.d.ts",

@@ -1198,6 +1198,7 @@ declare namespace IINA {
      * ```
      *
      * @availableInEntry Main and Global
+     * @category API Modules
      */
     export interface WebSocket {
       /**
@@ -1649,12 +1650,9 @@ declare namespace IINA {
     }
 
     /**
-     * The `Utils` module provides methods to resolve paths, execute external programs and show system dialogs.
+     * The `Utils` interface provides utility methods for various operations such as file manipulation, executing external programs, and interacting with the system.
      * @availableInEntry Main and Global entry
      * @category API Modules
-     */
-    /**
-     * The `Utils` interface provides utility methods for various operations such as file manipulation, executing external programs, and interacting with the system.
      */
     export interface Utils {
       /**
@@ -2228,7 +2226,7 @@ declare namespace IINA {
        * Show the file or directory in Finder.
        * @param path The path to the file or directory.
        */
-      revealInFinder(path: string): void;
+      showInFinder(path: string): void;
       /**
        * Read or write binary data from a file.
        * @param path The path to a file.
