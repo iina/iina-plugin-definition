@@ -1759,15 +1759,14 @@ declare namespace IINA {
        * - `chooseDir`: choose a directory instead of a file.
        * - `allowedFileTypes`: specify a list of available file extensions.
        *   Files without these extensions will be disabled in the panel.
-       * @returns Full path of the chosen file or directory.
+       * @returns A Promise that resolves to the full path of the chosen file or directory.
        *
        * @example
        * ```js
-       * const path = utils.chooseFile("Please select a subtitle file", {
+       * const path = await utils.chooseFile("Please select a subtitle file", {
        *   allowedFileTypes: ["ass", "srt"],
        * });
        * core.subtitle.loadTrack(path);
-       * ```
        */
       chooseFile(
         title: string,
@@ -1775,7 +1774,7 @@ declare namespace IINA {
           chooseDir: boolean;
           allowedFileTypes: string[];
         }>,
-      ): string;
+      ): Promise<string>;
       /**
        * Write a password to the system keychain.
        * Can be used to store other sensitive information such as JWT tokens.
