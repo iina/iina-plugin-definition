@@ -1,11 +1,11 @@
 {
   "name": "iina-plugin-definition",
-  "version": "0.99.3",
+  "version": "0.99.4",
   "description": "Type definitions for IINA plugin API.",
   "main": "",
   "types": "iina/index.d.ts",
   "author": {
-    "name": "Collider LI",
+    "name": "Hechen Li",
     "url": "https://github.com/lhc70000"
   },
   "license": "MIT",

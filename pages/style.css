@@ -7,10 +7,8 @@
     --ex-name-color-light: rgb(211 0 112);
     --ex-code-color-dark: rgb(121, 206, 255);
     --ex-code-color-light: rgb(75, 140, 178);
-    --light-color-background: #fefefe;
-    --light-color-background-secondary: #f9f9f9;
-    --light-color-accent: #dfdfdf;
-    --light-code-background: #fff;
+    --light-color-background: linear-gradient(to bottom, #fdfdfd, #f8f8f8);
+    --dark-color-background: linear-gradient(to bottom, #2f2f2f, #2a2a2a);
 }
 
 :root[data-theme="dark"] {
@@ -18,6 +16,7 @@
     --ex-signature-bg: var(--ex-signature-bg-dark);
     --ex-name-color: var(--ex-name-color-dark);
     --ex-code-color: var(--ex-code-color-dark);
+    --color-background: var(--dark-color-background);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,6 +25,7 @@
         --ex-signature-bg: var(--ex-signature-bg-dark);
         --ex-name-color: var(--ex-name-color-dark);
         --ex-code-color: var(--ex-code-color-dark);
+        --color-background: var(--dark-color-background);
     }
 }
 
@@ -34,6 +34,7 @@
     --ex-signature-bg: var(--ex-signature-bg-light);
     --ex-name-color: var(--ex-name-color-light);
     --ex-code-color: var(--ex-code-color-light);
+    --color-background: var(--light-color-background);
 }
 
 @media (prefers-color-scheme: light) {
@@ -42,6 +43,7 @@
         --ex-signature-bg: var(--ex-signature-bg-light);
         --ex-name-color: var(--ex-name-color-light);
         --ex-code-color: var(--ex-code-color-light);
+        --color-background: var(--light-color-background);
     }
 }
 
@@ -171,7 +173,7 @@ code.tsd-tag {
 }
 
 pre {
-    background: linear-gradient(to bottom, #fdfdfd, #f8f8f8);
+    background: var(--color-background);
 }
 
 pre code {

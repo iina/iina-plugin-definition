@@ -43,6 +43,8 @@ The following fields are optional:
   If specified, IINA will check for updates on GitHub automatically.
 - `ghVersion`: An integer that should be incremented every time you publish a new version to GitHub.
   When checking for updates, IINA will compare this number with the latest code on GitHub.
+- `localized`: A dictionary containing localized strings for Info.json.
+  See the [_Localization_](#localization) section below for more details.
 
 ## Plugin Permissions
 
@@ -254,3 +256,35 @@ you can select Develop > (your computer name) and select the
 JavaScript context you want to debug.
 This will open a new window with the Web Inspector.
 You will able to add breakpoints, inspect variables, and use the console in this window.
+
+## Localization
+
+Since IINA 1.5.0, basic localization support is available for plugins.
+
+In Info.json, you can add a `localized` field to specify the localized plugin name,
+description, and sidebar title. Example:
+
+```json
+{
+  "localized": {
+    "en": {
+      "name": "My Plugin",
+      "description": "This is my plugin.",
+      "sidebarTab": {
+        "name": "My Tab"
+      }
+    },
+    "fr": {
+      "name": "Mon Plugin",
+      "description": "Ceci est mon plugin.",
+      "sidebarTab": {
+        "name": "Mon Onglet"
+      }
+    }
+  }
+}
+```
+
+For plugin-managed UI, you can use `iina.utils.preferredLocalizations()` to get
+a list of preferred localizations of the system, then use your preferred
+JavaScript localization library to load the localized strings for your UI.

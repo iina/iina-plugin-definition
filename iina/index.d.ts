@@ -1800,6 +1800,12 @@ declare namespace IINA {
        * @returns `true` if the URL is opened successfully, `false` otherwise.
        */
       open(url: string): boolean;
+      /**
+       * Get the preferred localizations of the system (Bundle.main.preferredLocalizations).
+       * @returns An array of preferred localizations, in order of preference.
+       * Example: `["en", "zh-Hans", "ja"]`
+       */
+      preferredLocalizations(): string[];
     }
 
     /**
