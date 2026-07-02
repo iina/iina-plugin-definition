@@ -364,7 +364,7 @@ declare namespace IINA {
        * Can also be achieved by mpv's `video-add`, `audio-add` and `sub-add` commands,
        * but the IINA version performs other necessary checks.
        */
-      loadTrack(url: string);
+      loadTrack(url: string): void;
     }
 
     /**
@@ -471,13 +471,13 @@ declare namespace IINA {
        * @remarks Use mpv's `seek` command for advanced seeking.
        * @seealso {@link API.StatusAPI.duration | core.status.duration} for getting the duration of the current file.
        */
-      seekTo(seconds: number);
+      seekTo(seconds: number): void;
       /**
        * Set the playback speed.
        * @param speed The speed to set. 1.0 is normal speed, 2.0 is twice as fast, 0.5 is half speed, etc.
        * @remarks Equivalent to setting the mpv `speed` property.
        */
-      setSpeed(speed: number);
+      setSpeed(speed: number): void;
       /**
        * Returns the list of chapters in the current file.
        */
@@ -488,7 +488,7 @@ declare namespace IINA {
        * The chapter list can be obtained from {@link API.Core.getChapters | getChapters}.
        * @remarks Basically, IINA seeks to the start time of the chapter.
        */
-      playChapter(index: number);
+      playChapter(index: number): void;
       /**
        * Returns the list of entries in the playback history.
        */
@@ -830,7 +830,7 @@ declare namespace IINA {
        * @param event The event name.
        * @param id The unique string ID returned by the `on` method.
        */
-      off(event: string, id: string);
+      off(event: string, id: string): void;
     }
 
     /**
